@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package proto;
+
+message Message {
+    Command cmd = 1;
+}
+
+enum Command {
+    Unknown = 0;
+    Ping = 1; // 心跳
+    Pong = 2;
+    Connect = 3; // 连接
+    DisConnect = 4; // 断开连接
+    Packet = 5; // 发送(接受) 消息
+}
