@@ -28,6 +28,7 @@ type Conn struct {
 	readChan  chan *proto.Message
 	writeChan chan *proto.Message
 	closed    *bool2.Bool
+	onClose   func()
 
 	rw *io.ReadWriter
 }

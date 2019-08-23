@@ -16,7 +16,7 @@ install_protoc () {
   mv .tmp/protoc/bin/protoc bin/protoc
   mv .tmp/protoc/include bin/include
   rm -rf .tmp
-
+  rm -rf protoc.zip
 }
 
 if [[ ! -f "bin/protoc" ]] ; then
@@ -34,11 +34,12 @@ if [[ ! -f "bin/protoc-gen-go" ]] ; then
   go install -v github.com/gogo/protobuf/protoc-gen-gogofast
   go install -v github.com/gogo/protobuf/protoc-gen-gogoslick
   go install -v github.com/golang/mock/mockgen
+  go install -v github.com/mwitkow/go-proto-validators/protoc-gen-govalidators
 fi
 
 imports=(
   "proto"
-  "./third_party/protobuf"
+  "./third_party"
   "./bin/include"
 )
 
@@ -70,7 +71,10 @@ for mapping in "${mappings[@]}"
 do
   gogoarg+=",M$mapping"
 done
-
+export PATH=$PATH:./bin
 $protoc ${protocarg} ./proto/*.proto \
       --plugin=protoc-gen-go=./bin/protoc-gen-go \
-      --plugin=protoc-gen-gogoslick=./bin/protoc-gen-gogoslick --gogoslick_out=${gogoarg}:./proto
+      --plugin=protoc-gen-gogoslick=./bin/protoc-gen-gogoslick \
+      --plugin=protoc-gen-govalidators=./bin/protoc-gen-govalidators \
+      --govalidators_out=./proto \
+      --gogoslick_out=${gogoarg}:./proto

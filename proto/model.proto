@@ -1,6 +1,12 @@
 syntax = "proto3";
 
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "google/protobuf/timestamp.proto";
+
 package proto;
+
+option go_package = "pb";
 
 message Message {
     Command cmd = 1;
@@ -13,4 +19,16 @@ enum Command {
     Connect = 3; // 连接
     DisConnect = 4; // 断开连接
     Packet = 5; // 发送(接受) 消息
+}
+
+message User {
+    uint64 id = 1 [(gogoproto.customname) = "ID", (validator.field) = {
+            int_gt: 0
+            human_error: "ID must a positive integer"
+        }];
+    string avatar = 2;
+    string username = 3;
+    string password = 4;
+    string nickname = 5;
+    google.protobuf.Timestamp create_date = 6 [(gogoproto.stdtime) = true];
 }
