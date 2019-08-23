@@ -2,6 +2,11 @@ package internal
 
 import (
 	"github.com/go-xorm/xorm"
+	"github.com/pkg/errors"
+)
+
+var (
+	ErrNotExists = errors.New("not exist")
 )
 
 type Storage struct {

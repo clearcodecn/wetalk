@@ -22,13 +22,21 @@ enum Command {
 }
 
 message User {
-    uint64 id = 1 [(gogoproto.customname) = "ID", (validator.field) = {
+    uint64 id = 1 [(validator.field) = {
             int_gt: 0
             human_error: "ID must a positive integer"
         }];
     string avatar = 2;
-    string username = 3;
-    string password = 4;
+    string username = 3 [(validator.field) = {
+            length_gt: 6
+            length_lt: 12
+            human_error: "username should between 6-12"
+        }];
+    string password = 4 [(validator.field) = {
+            length_gt: 6
+            length_lt: 12
+            human_error: "password should between 6-12"
+        }];
     string nickname = 5;
     google.protobuf.Timestamp create_date = 6 [(gogoproto.stdtime) = true];
 }
