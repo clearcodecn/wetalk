@@ -1,0 +1,39 @@
+http_config:
+  addr: 0.0.0.0:8090
+  key:
+  cert:
+
+email_config:
+  enable: true
+  driver: sendcloud
+  content:
+    fake: true
+    api_user: 'mrjnamei_test_KGqwD4'
+    api_key: 'z8RKSCFt4mUPevvx'
+    from: 'admin@wetalk.com'
+    from_name: WeTalk
+
+sms_config:
+  enable: true
+  driver: smsbao
+  content:
+    username: 'victorqsjx'
+    password: 'xy870702xy'
+
+db_config:
+  driver: sqlite3
+  dsn: ./test/dev.db
+
+upload_config:
+  driver: qiniu
+  content:
+    ak: 'xx'
+    sk: 'xx'
+    bucket: 'xx'
+    domain: 'x'
+    zone: 'x'
+    https: true
+    enable_cdn_upload: true
+    allow_extensions:
+      - jpg
+      - png

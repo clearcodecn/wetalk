@@ -1,4 +1,4 @@
-package io
+package server
 
 import (
 	"bytes"
@@ -11,16 +11,16 @@ import (
 
 func TestNewReadWriter(t *testing.T) {
 	var buf = bytes.NewBuffer(nil)
-	rw1 := NewReadWriter(buf, true)
+	rw1 := NewPacket(buf)
 	require.NotNil(t, rw1)
 	var buf2 = bytes.NewBuffer(nil)
-	rw2 := NewReadWriter(buf2, false)
+	rw2 := NewPacket(buf2)
 	require.NotNil(t, rw2)
 }
 
 func TestReadWriter(t *testing.T) {
 	var buf = bytes.NewBuffer(nil)
-	rw1 := NewReadWriter(buf, true)
+	rw1 := NewPacket(buf)
 	require.NotNil(t, rw1)
 
 	d1 := newRandomSizeData(80)

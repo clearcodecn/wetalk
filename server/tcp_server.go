@@ -2,12 +2,12 @@ package server
 
 import (
 	"github.com/clearcodecn/wetalk/configs"
+	pb "github.com/clearcodecn/wetalk/proto"
 	"net"
 	"sync/atomic"
 	"time"
 
 	"github.com/clearcodecn/log"
-	"github.com/clearcodecn/wetalk/proto"
 	"go.uber.org/zap"
 )
 
@@ -36,7 +36,6 @@ func NewTCPServer(config configs.TCPConfig) *TCPServer {
 	} else {
 		ts.addr = addr
 	}
-
 	var timeout = time.Duration(config.Timeout) * time.Second
 	if timeout == 0 {
 		timeout = defaultTimeout
@@ -87,12 +86,9 @@ func (s *TCPServer) handleConnection(conn net.Conn) {
 		return
 	}
 	atomic.AddUint64(&s.connCount, 1)
-	c := NewConn(conn, s.timeout, defaultChannelSize)
-	c.onClose = func() {
-		atomic.AddUint64(&s.connCount, -1)
-	}
+	c := newClientConn(conn, s.timeout, defaultWriteSize)
 	// TODO auth
-	msg := &proto.Message{}
+	msg := &pb.Message{}
 	err := c.ReadMessage(msg)
 	if err != nil {
 		log.Error("read auth message failed", zap.Error(err))

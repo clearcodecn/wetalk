@@ -28,7 +28,3 @@ type WebsocketConfig struct {
 	MaxConns         int    `json:"max_conns" yaml:"max_conns"`                   // 最大连接数量.
 	Timeout          int    `json:"timeout" yaml:"timeout"`                       // 超时控制.
 }
-
-type HttpConfig struct {
-	Addr string `json:"addr"`
-}

@@ -15,7 +15,7 @@ func NewStaticStorage(s *Storage) (*StaticStorage, error) {
 	ss := new(StaticStorage)
 	ss.Storage = s
 
-	ss.users = make(map[string]string)
+	ss.users = make(map[string]pb.User)
 
 	return ss, nil
 }

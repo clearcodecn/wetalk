@@ -15,3 +15,22 @@ func (s *Storage) GetUserByUsername(username string) (*pb.User, error) {
 	}
 	return user, nil
 }
+
+func (s *Storage) AddUser(user *pb.User) error {
+	sess := s.engine.NewSession()
+	defer sess.Close()
+	if _, err := sess.InsertOne(user); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *Storage) DeleteUser(user *pb.User) error {
+	sess := s.engine.NewSession()
+	defer sess.Close()
+
+	if _, err := sess.Delete(user); err != nil {
+		return err
+	}
+	return nil
+}
