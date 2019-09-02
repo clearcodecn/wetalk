@@ -1,16 +1,7 @@
 package fs
 
 import (
-	"github.com/clearcodecn/wetalk/pkg/fs/qiniu"
 	"mime/multipart"
-)
-
-var (
-	Uploaders = map[string]func() Uploader{
-		"qiniu": func() Uploader {
-			return new(qiniu.Uploader)
-		},
-	}
 )
 
 type Uploader interface {

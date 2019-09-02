@@ -32,7 +32,7 @@ upload_config:
     bucket: 'xx'
     domain: 'x'
     zone: 'x'
-    https: true
+    https: false
     enable_cdn_upload: true
     allow_extensions:
       - jpg

@@ -1,6 +1,14 @@
 package configs
 
-import "gopkg.in/yaml.v2"
+import (
+	"github.com/clearcodecn/wetalk/pkg/fs"
+	"github.com/clearcodecn/wetalk/pkg/fs/qiniu"
+	"github.com/clearcodecn/wetalk/pkg/mail"
+	"github.com/clearcodecn/wetalk/pkg/mail/sendcloud"
+	"github.com/clearcodecn/wetalk/pkg/sms"
+	"github.com/clearcodecn/wetalk/pkg/sms/smsbao"
+	"gopkg.in/yaml.v2"
+)
 
 type WebConfig struct {
 	HttpConfig   HttpConfig   `yaml:"http_config" json:"http_config"`
@@ -49,3 +57,19 @@ func ParseWebConfig(data []byte) (WebConfig, error) {
 	err := yaml.Unmarshal(data, &config)
 	return config, err
 }
+
+var (
+	Uploaders = map[string]func() fs.Uploader{
+		"qiniu": func() fs.Uploader {
+			return new(qiniu.Uploader)
+		},
+	}
+
+	MailSenders = map[string]func() mail.Sender{
+		"sendcloud": func() mail.Sender { return new(sendcloud.Email) },
+	}
+
+	SmsSenders = map[string]func() sms.Sender{
+		"smsbao": func() sms.Sender { return new(smsbao.Sms) },
+	}
+)

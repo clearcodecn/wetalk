@@ -14,7 +14,7 @@ func (s *Server) userUpdate(ctx *gin.Context) {
 
 }
 
-func (s *Server) UploadImage(ctx *gin.Context) {
+func (s *Server) Upload(ctx *gin.Context) {
 	mh, err := ctx.FormFile("image")
 	if err != nil {
 		ctx.JSON(422, fail("获取文件失败", err))
@@ -27,3 +27,5 @@ func (s *Server) UploadImage(ctx *gin.Context) {
 	}
 	ctx.JSON(200, fi)
 }
+
+

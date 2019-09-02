@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"github.com/clearcodecn/wetalk/api/http"
 	"github.com/clearcodecn/wetalk/configs"
-	"github.com/clearcodecn/wetalk/pkg/fs"
-	"github.com/clearcodecn/wetalk/pkg/mail"
-	"github.com/clearcodecn/wetalk/pkg/sms"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
 	"gopkg.in/yaml.v2"
@@ -50,7 +47,7 @@ func runWeb(ctx *cli.Context) error {
 
 	// load sms
 	if config.SmsConfig.Enable {
-		if _, ok := sms.Senders[config.SmsConfig.Driver]; !ok {
+		if _, ok := configs.SmsSenders[config.SmsConfig.Driver]; !ok {
 			return fmt.Errorf("can't find sms driver: %s", config.SmsConfig.Driver)
 		}
 
@@ -58,7 +55,7 @@ func runWeb(ctx *cli.Context) error {
 		if err != nil {
 			return err
 		}
-		sender := sms.Senders[config.SmsConfig.Driver]()
+		sender := configs.SmsSenders[config.SmsConfig.Driver]()
 		if err := sender.Init(data); err != nil {
 			return fmt.Errorf("init sms sender failed: %s", err)
 		}
@@ -67,7 +64,7 @@ func runWeb(ctx *cli.Context) error {
 	}
 
 	if config.EmailConfig.Enable {
-		if _, ok := mail.Senders[config.EmailConfig.Driver]; !ok {
+		if _, ok := configs.MailSenders[config.EmailConfig.Driver]; !ok {
 			return fmt.Errorf("can't find sms driver: %s", config.EmailConfig.Driver)
 		}
 
@@ -75,7 +72,7 @@ func runWeb(ctx *cli.Context) error {
 		if err != nil {
 			return err
 		}
-		sender := mail.Senders[config.EmailConfig.Driver]()
+		sender := configs.MailSenders[config.EmailConfig.Driver]()
 		if err := sender.Init(data); err != nil {
 			return fmt.Errorf("init mail sender failed: %s", err)
 		}
@@ -84,7 +81,7 @@ func runWeb(ctx *cli.Context) error {
 	}
 
 	// upload config
-	if d, ok := fs.Uploaders[config.UploadConfig.Driver]; ok {
+	if d, ok := configs.Uploaders[config.UploadConfig.Driver]; ok {
 		data, err := yaml.Marshal(config.UploadConfig.Content)
 		if err != nil {
 			return err

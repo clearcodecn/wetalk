@@ -16,6 +16,26 @@ type Server struct {
 	uploader   fs.Uploader
 }
 
+type Option func(server *Server)
+
+func WithSmsSender(sender sms.Sender) Option {
+	return func(s *Server) {
+		s.smsSender = sender
+	}
+}
+
+func WithEmailSender(sender mail.Sender) Option {
+	return func(server *Server) {
+		server.mailSender = sender
+	}
+}
+
+func WithUploader(uploader fs.Uploader) Option {
+	return func(s *Server) {
+		s.uploader = uploader
+	}
+}
+
 func NewServer(config configs.WebConfig, options ...Option) *Server {
 	s := new(Server)
 	s.config = config
@@ -40,25 +60,6 @@ func (s *Server) registerRoutes() {
 	{
 		g := s.engine.Group("/api/v1")
 		g.PUT("/user", s.userUpdate)
-	}
-}
-
-type Option func(server *Server)
-
-func WithSmsSender(sender sms.Sender) Option {
-	return func(s *Server) {
-		s.smsSender = sender
-	}
-}
-
-func WithEmailSender(sender mail.Sender) Option {
-	return func(server *Server) {
-		server.mailSender = sender
-	}
-}
-
-func WithUploader(uploader fs.Uploader) Option {
-	return func(s *Server) {
-		s.uploader = uploader
+		g.POST("/upload", s.Upload)
 	}
 }
