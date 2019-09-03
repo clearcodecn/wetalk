@@ -77,8 +77,7 @@ func (s *Server) register(ctx *gin.Context) {
 		DeleteAt:  time.Time{},
 	}
 
-	s.model.
-
+	_ = user
 }
 
 func (s *Server) userUpdate(ctx *gin.Context) {
