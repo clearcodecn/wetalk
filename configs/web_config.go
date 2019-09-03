@@ -21,9 +21,11 @@ type WebConfig struct {
 }
 
 type HttpConfig struct {
-	Addr string `json:"addr" yaml:"addr"`
-	Key  string `json:"key" yaml:"key"`
-	Cert string `json:"cert" yaml:"cert"`
+	Addr           string `json:"addr" yaml:"addr"`
+	Key            string `json:"key" yaml:"key"`
+	Cert           string `json:"cert" yaml:"cert"`
+	EnableRegister bool   `json:"enable_register" yaml:"enable_register"`
+	EnableVerify   bool   `json:"enable_verify" yaml:"enable_verify"`
 }
 
 type EmailConfig struct {

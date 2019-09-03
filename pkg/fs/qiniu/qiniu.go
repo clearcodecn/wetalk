@@ -149,7 +149,7 @@ func (u *Uploader) uploadReader(r io.Reader, name string, size int64) (*storage.
 
 	formUploader := storage.NewFormUploader(&u.qcfg)
 	ret := storage.PutRet{}
-	err := formUploader.Put(context.Background(), &ret, upToken, name, r, size, nil)
+	err := formUploader.Put(context.Background(), &ret, upToken, name, r, size, &storage.PutExtra{})
 	if err != nil {
 		return nil, err
 	}

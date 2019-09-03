@@ -2,12 +2,14 @@ http_config:
   addr: 0.0.0.0:8090
   key:
   cert:
+  enable_register: true
+  enable_verify: true  # 是否启用注册验证
 
 email_config:
   enable: true
   driver: sendcloud
   content:
-    fake: true
+    fake: false
     api_user: 'mrjnamei_test_KGqwD4'
     api_key: 'z8RKSCFt4mUPevvx'
     from: 'admin@wetalk.com'
@@ -27,13 +29,15 @@ db_config:
 upload_config:
   driver: qiniu
   content:
-    ak: 'xx'
-    sk: 'xx'
-    bucket: 'xx'
-    domain: 'x'
-    zone: 'x'
+    ak: 'cQUgmgQ5MX2tqLiiVgd9hDSkP3X-IBb3zxwdJblQ'
+    sk: '5ACiTLpyt489NCGd_gqRj5GITzXlkrPQ4LOIxVSl'
+    bucket: 'wetalk'
+    domain: 'http://px8umyma1.bkt.clouddn.com'
+    zone: 'huanan'
     https: false
     enable_cdn_upload: true
     allow_extensions:
       - jpg
       - png
+
+push_server:

@@ -2,10 +2,13 @@ package web
 
 import (
 	"fmt"
+	"github.com/clearcodecn/log"
 	"github.com/clearcodecn/wetalk/api/http"
 	"github.com/clearcodecn/wetalk/configs"
+	"github.com/fsnotify/fsnotify"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
+	"go.uber.org/zap"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 )
@@ -28,6 +31,10 @@ func init() {
 				Required: true,
 				Value:    "/etc/wetalk/web.yaml",
 			},
+			cli.BoolFlag{
+				Name:  "reload",
+				Usage: "enable config watch reload",
+			},
 		},
 	}
 }
@@ -44,6 +51,10 @@ func runWeb(ctx *cli.Context) error {
 	}
 
 	var opts []http.Option
+
+	if ctx.Bool("reload") {
+		opts = append(opts, http.WithConfigReloader(configReload(ctx.String("c"))))
+	}
 
 	// load sms
 	if config.SmsConfig.Enable {
@@ -93,6 +104,46 @@ func runWeb(ctx *cli.Context) error {
 		opts = append(opts, http.WithUploader(uploader))
 	}
 
+	if config.DbConfig.Driver == "" || config.DbConfig.Dsn == "" {
+		return fmt.Errorf("dbconfig can not be empty")
+	}
+
 	s := http.NewServer(config, opts...)
 	return s.Run()
+}
+
+func configReload(path string) func() chan configs.WebConfig {
+	return func() chan configs.WebConfig {
+		ch := make(chan configs.WebConfig)
+		w, err := fsnotify.NewWatcher()
+		if err != nil {
+			panic(err)
+		}
+		_ = w.Add(path)
+		go func() {
+			for {
+				select {
+				case ev := <-w.Events:
+					if ev.Op == fsnotify.Write {
+						data, err := ioutil.ReadFile(path)
+						if err != nil {
+							log.Error("failed to read config", zap.Error(err))
+							continue
+						}
+						cfg, err := configs.ParseWebConfig(data)
+						if err != nil {
+							log.Error("unable to parse config", zap.Error(err))
+							continue
+						}
+						ch <- cfg
+					}
+				case <-w.Errors:
+					w.Close()
+					close(ch)
+					return
+				}
+			}
+		}()
+		return ch
+	}
 }

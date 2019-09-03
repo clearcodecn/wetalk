@@ -29,5 +29,8 @@ func success(message string) error {
 }
 
 func fail(message string, err error) error {
-	return &ErrMsg{Code: Fail, Message: fmt.Sprintf("%s : %s", message, err)}
+	if err != nil {
+		return &ErrMsg{Code: Fail, Message: fmt.Sprintf("%s : %s", message, err)}
+	}
+	return &ErrMsg{Code: Fail, Message: message}
 }
