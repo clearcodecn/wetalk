@@ -26,6 +26,7 @@ type HttpConfig struct {
 	Cert           string `json:"cert" yaml:"cert"`
 	EnableRegister bool   `json:"enable_register" yaml:"enable_register"`
 	EnableVerify   bool   `json:"enable_verify" yaml:"enable_verify"`
+	JwtKey         string `json:"jwt_key" yaml:"jwt_key"`
 }
 
 type EmailConfig struct {

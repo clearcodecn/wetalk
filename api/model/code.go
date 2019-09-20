@@ -32,7 +32,7 @@ func (m *Model) VerifyCode(vc *VerifyCode) bool {
 	_, err := m.engine.Transaction(func(session *xorm.Session) (i interface{}, e error) {
 		var newVc = new(VerifyCode)
 		t := time.Now().Add(-time.Minute * 30)
-		i, e = session.Where("code = ? and info = ? and create_time >= ? and verified = ?", vc.Code, vc.Info, t, false).Get(newVc)
+		i, e = session.Where("code = ? and info = ? and create_time >= ? and verified = ? and type = ?", vc.Code, vc.Info, t, false, vc.Type).Get(newVc)
 		if i.(bool) {
 			newVc.Verified = true
 			return session.Cols("verified").Update(newVc)

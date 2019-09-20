@@ -14,8 +14,11 @@ import (
 )
 
 type Server struct {
-	engine     *gin.Engine
-	smsSender  sms.Sender
+	engine *gin.Engine
+
+	smsSender sms.Sender
+	smsChan   chan *SmsInfo
+
 	mailSender mail.Sender
 	mailChan   chan *MailInfo
 
@@ -26,6 +29,8 @@ type Server struct {
 	config configs.WebConfig
 
 	configReloader func() chan configs.WebConfig
+
+	LoginHook []func(user *model.User)
 }
 
 type Option func(server *Server)
@@ -70,6 +75,7 @@ func NewServer(config configs.WebConfig, options ...Option) *Server {
 		panic(err)
 	}
 
+	s.LoginHook = make([]func(*model.User), 0)
 	s.config = config
 	s.engine = gin.New()
 	s.registerRoutes()
@@ -81,6 +87,11 @@ func (s *Server) Run() error {
 	if s.mailSender != nil {
 		s.mailChan = make(chan *MailInfo, 100)
 		go s.startUpMailer()
+	}
+
+	if s.smsSender != nil {
+		s.smsChan = make(chan *SmsInfo, 100)
+		go s.startUpSmser()
 	}
 
 	if s.config.HttpConfig.Key != "" && s.config.HttpConfig.Cert != "" {
@@ -98,6 +109,7 @@ func (s *Server) registerRoutes() {
 	}
 	{
 		g := s.engine.Group("/api/v1")
+		g.Use(s.authMiddleware)
 		g.PUT("/user", s.userUpdate)
 		g.POST("/upload", s.Upload)
 	}
@@ -122,11 +134,28 @@ type MailInfo struct {
 func (s *Server) startUpMailer() {
 	for vc := range s.mailChan {
 		log.Info("send a new mail", zap.Any("mailinfo", vc))
-		if err := s.mailSender.Send(vc.User, vc.Title, vc.Content); err != nil {
+		if err := s.mailSender.Send(vc.Info, vc.Title, vc.Content); err != nil {
 			log.Error("send email failed", zap.Error(err))
 			continue
 		}
 		vc.CreateTime = time.Now()
 		_ = s.model.CreateVerifyCode(vc.VerifyCode)
+	}
+}
+
+type SmsInfo struct {
+	*model.VerifyCode
+	Content string
+}
+
+func (s *Server) startUpSmser() {
+	for sc := range s.smsChan {
+		log.Info("send a new sms", zap.Any("smsinfo", sc))
+		if err := s.smsSender.Send(sc.Info, sc.Content); err != nil {
+			log.Error("can not send sms", zap.Error(err))
+			continue
+		}
+		sc.CreateTime = time.Now()
+		_ = s.model.CreateVerifyCode(sc.VerifyCode)
 	}
 }

@@ -10,6 +10,7 @@ require go.uber.org/zap v1.10.0
 
 require (
 	github.com/clearcodecn/log v0.0.0-20190806160118-ab6f2f2e97d3
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fsnotify/fsnotify v1.4.7
 	github.com/gabriel-vasile/mimetype v0.3.17
 	github.com/gin-gonic/gin v1.4.0

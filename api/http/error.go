@@ -15,6 +15,12 @@ func (e ErrMsg) String() string {
 	return fmt.Sprintf("code: %d, message:%s", e.Code, e.Message)
 }
 
+type SuccessMsg struct {
+	Message string      `json:"message"`
+	Code    int         `json:"code"`
+	Data    interface{} `json:"data"`
+}
+
 const (
 	Ok int = iota
 	Fail
@@ -33,4 +39,9 @@ func fail(message string, err error) error {
 		return &ErrMsg{Code: Fail, Message: fmt.Sprintf("%s : %s", message, err)}
 	}
 	return &ErrMsg{Code: Fail, Message: message}
+}
+
+func successObject(message string, v interface{}) *SuccessMsg {
+	sm := &SuccessMsg{Message: message, Data: v, Code: Ok}
+	return sm
 }
